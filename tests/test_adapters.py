@@ -1,4 +1,5 @@
 import pytest
+import builtins
 from silver_adapters import (
     PythonFramework,
     CommandBridge,
@@ -65,7 +66,7 @@ class TestDataImportPlan:
         assert plan.source == "pandas"
         assert plan.command == "python"
         assert "silver_pandas_bridge" in plan.args
-        assert "train.csv" in plan.args
+        assert any("train.csv" in argument for argument in plan.args)
         assert plan.options == {"sep": ","}
 
     def test_pandas_import_empty_path_raises_error(self):
@@ -230,19 +231,19 @@ class TestRemoteTrainingClient:
         # Mock the import error
         import sys
 
-        original_import = __builtins__.__import__
+        original_import = builtins.__import__
 
         def mock_import(name, *args, **kwargs):
             if name == "requests":
                 raise ImportError("requests not available")
             return original_import(name, *args, **kwargs)
 
-        __builtins__.__import__ = mock_import
+        builtins.__import__ = mock_import
         try:
             with pytest.raises(ImportError, match="requests package is required"):
                 RemoteTrainingClient("https://api.example.com")
         finally:
-            __builtins__.__import__ = original_import
+            builtins.__import__ = original_import
 
 
 class TestPyTorchBridge:
@@ -250,37 +251,37 @@ class TestPyTorchBridge:
         # Mock the import error
         import sys
 
-        original_import = __builtins__.__import__
+        original_import = builtins.__import__
 
         def mock_import(name, *args, **kwargs):
             if name == "torch":
                 raise ImportError("torch not available")
             return original_import(name, *args, **kwargs)
 
-        __builtins__.__import__ = mock_import
+        builtins.__import__ = mock_import
         try:
             with pytest.raises(ImportError, match="torch package is required"):
                 PyTorchBridge.from_checkpoint("model.pt")
         finally:
-            __builtins__.__import__ = original_import
+            builtins.__import__ = original_import
 
     def test_pytorch_bridge_to_checkpoint_without_torch_raises_error(self):
         # Mock the import error
         import sys
 
-        original_import = __builtins__.__import__
+        original_import = builtins.__import__
 
         def mock_import(name, *args, **kwargs):
             if name == "torch":
                 raise ImportError("torch not available")
             return original_import(name, *args, **kwargs)
 
-        __builtins__.__import__ = mock_import
+        builtins.__import__ = mock_import
         try:
             with pytest.raises(ImportError, match="torch package is required"):
                 PyTorchBridge.to_checkpoint(None, None, 1, "model.pt")
         finally:
-            __builtins__.__import__ = original_import
+            builtins.__import__ = original_import
 
 
 class TestTensorFlowBridge:
@@ -288,37 +289,37 @@ class TestTensorFlowBridge:
         # Mock the import error
         import sys
 
-        original_import = __builtins__.__import__
+        original_import = builtins.__import__
 
         def mock_import(name, *args, **kwargs):
             if name == "tensorflow":
                 raise ImportError("tensorflow not available")
             return original_import(name, *args, **kwargs)
 
-        __builtins__.__import__ = mock_import
+        builtins.__import__ = mock_import
         try:
             with pytest.raises(ImportError, match="tensorflow package is required"):
                 TensorFlowBridge.from_checkpoint("model.h5")
         finally:
-            __builtins__.__import__ = original_import
+            builtins.__import__ = original_import
 
     def test_tensorflow_bridge_to_checkpoint_without_tensorflow_raises_error(self):
         # Mock the import error
         import sys
 
-        original_import = __builtins__.__import__
+        original_import = builtins.__import__
 
         def mock_import(name, *args, **kwargs):
             if name == "tensorflow":
                 raise ImportError("tensorflow not available")
             return original_import(name, *args, **kwargs)
 
-        __builtins__.__import__ = mock_import
+        builtins.__import__ = mock_import
         try:
             with pytest.raises(ImportError, match="tensorflow package is required"):
                 TensorFlowBridge.to_checkpoint(None, "model.h5")
         finally:
-            __builtins__.__import__ = original_import
+            builtins.__import__ = original_import
 
 
 class TestEnvironmentVariableHandling:
