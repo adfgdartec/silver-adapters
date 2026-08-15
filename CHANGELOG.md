@@ -8,7 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.2.0] - 2026-08-15
 
 ### Changed
-- Added a coordinated release version and reproducible OIDC-based PyPI publishing.
+- Added configurable positive HTTP timeouts to `RemoteTrainingClient`.
 
 ## [0.1.0] - 2024-08-04
 

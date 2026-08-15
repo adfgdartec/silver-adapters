@@ -193,6 +193,12 @@ class TestNotebookDocument:
 
 
 class TestRemoteTrainingClient:
+    def test_client_timeout_is_configurable(self):
+        client = RemoteTrainingClient("https://api.example.com", timeout=4.5)
+        assert client.timeout == 4.5
+        with pytest.raises(ValueError, match="timeout must be positive"):
+            RemoteTrainingClient("https://api.example.com", timeout=0)
+
     def test_client_creation(self):
         try:
             import requests

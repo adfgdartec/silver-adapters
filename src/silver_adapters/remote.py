@@ -4,13 +4,17 @@ from typing import Any, Dict, List
 
 class RemoteTrainingClient:
     def __init__(
-        self, base_url: str, headers: Dict[str, str] = None, session: Any = None
+        self, base_url: str, headers: Dict[str, str] = None, session: Any = None,
+        timeout: float = 30.0,
     ):
         if not base_url.strip():
             raise ValueError("Remote training base URL is required")
         self.base_url = base_url.rstrip("/")
         self.headers = headers or {}
         self._session = session
+        if timeout <= 0:
+            raise ValueError("Remote training timeout must be positive")
+        self.timeout = timeout
         try:
             import requests
 
@@ -47,6 +51,7 @@ class RemoteTrainingClient:
                 f"{self.base_url}{path}",
                 headers={"content-type": "application/json", **self.headers},
                 json=body if body is not None else None,
+                timeout=self.timeout,
             )
             if not response.ok:
                 raise RuntimeError(
