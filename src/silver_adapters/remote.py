@@ -12,6 +12,7 @@ class RemoteTrainingClient:
         self.base_url = base_url.rstrip("/")
         self.headers = headers or {}
         self._session = session
+        self._owned_session = None
         if timeout <= 0:
             raise ValueError("Remote training timeout must be positive")
         self.timeout = timeout
@@ -27,7 +28,9 @@ class RemoteTrainingClient:
     def _get_session(self):
         if self._session:
             return self._session
-        return self._requests.Session()
+        if self._owned_session is None:
+            self._owned_session = self._requests.Session()
+        return self._owned_session
 
     async def start(self, payload: Any) -> Dict[str, Any]:
         return await self._send("/runs", "POST", payload)
@@ -60,3 +63,8 @@ class RemoteTrainingClient:
             return response.json()
 
         return await asyncio.to_thread(sync_request)
+
+    async def aclose(self) -> None:
+        if self._owned_session is not None:
+            await asyncio.to_thread(self._owned_session.close)
+            self._owned_session = None
