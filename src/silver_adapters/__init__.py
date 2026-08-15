@@ -10,6 +10,9 @@ from .models import (
 from .notebooks import notebook_document, silver_notebook_cells
 from .protocols import decode_jsonl, encode_jsonl, kaggle_import, pandas_import
 from .remote import RemoteTrainingClient
+from .models_api import HuggingFaceModelAdapter, ModelAdapter, ModelSpec, PyTorchModelAdapter
+
+__version__ = "0.3.0"
 
 __all__ = [
     "PythonFramework",
@@ -28,4 +31,5 @@ __all__ = [
     "RemoteTrainingClient",
     "PyTorchBridge",
     "TensorFlowBridge",
+    "ModelAdapter", "ModelSpec", "PyTorchModelAdapter", "HuggingFaceModelAdapter",
 ]
