@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Added configurable positive HTTP timeouts to `RemoteTrainingClient`.
 - Reused owned HTTP sessions across requests and added asynchronous cleanup.
+- Added generic PyTorch and optional Hugging Face model adapters for causal-LM and classification tasks.
 
 ## [0.1.0] - 2024-08-04
 
