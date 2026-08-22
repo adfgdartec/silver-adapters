@@ -29,10 +29,14 @@ def kaggle_import(dataset: str, options: Dict[str, str] = None) -> DataImportPla
 
 
 def encode_jsonl(events: List[SilverJsonlEvent]) -> str:
-    return (
-        "\n".join(json.dumps({"kind": event.kind, **event.data}) for event in events)
-        + "\n"
-    )
+    if not events:
+        return ""
+    encoded = []
+    for event in events:
+        if not isinstance(event.kind, str) or not event.kind.strip():
+            raise ValueError("JSONL event kind must be a non-empty string")
+        encoded.append(json.dumps({**event.data, "kind": event.kind}))
+    return "\n".join(encoded) + "\n"
 
 
 def decode_jsonl(text: str) -> List[SilverJsonlEvent]:
@@ -48,6 +52,10 @@ def decode_jsonl(text: str) -> List[SilverJsonlEvent]:
                     f"Line {line_number}: must be an object with 'kind' field"
                 )
             kind = data.pop("kind")
+            if not isinstance(kind, str) or not kind.strip():
+                raise ValueError(
+                    f"Line {line_number}: 'kind' must be a non-empty string"
+                )
             events.append(SilverJsonlEvent(kind=kind, data=data))
         except json.JSONDecodeError as error:
             raise ValueError(f"Line {line_number}: invalid JSON - {error}") from error

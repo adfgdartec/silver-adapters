@@ -5,6 +5,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.4.0] - 2026-08-22
+
+### Fixed
+- Prevented event payloads from overriding the Silver JSONL event kind.
+- Rejected empty and non-string event kinds during encoding and decoding.
+- Encoded an empty event stream as empty text instead of a phantom blank record.
+
+### Added
+- Added the advertised `huggingface` optional dependency for model adapters.
+- Hardened CI and releases with supported-Python testing and tag/version checks.
+
 ## [0.3.0] - 2026-08-15
 
 ### Changed

@@ -98,6 +98,23 @@ class TestSilverJsonlEvent:
 
 
 class TestJsonlEncoding:
+    def test_empty_event_stream_encodes_to_empty_text(self):
+        assert encode_jsonl([]) == ""
+
+    def test_event_kind_cannot_be_overridden_by_data(self):
+        encoded = encode_jsonl([SilverJsonlEvent("metric", {"kind": "spoofed"})])
+        assert decode_jsonl(encoded)[0].kind == "metric"
+
+    @pytest.mark.parametrize("kind", ["", "   ", 42])
+    def test_event_kind_must_be_a_non_empty_string(self, kind):
+        with pytest.raises(ValueError, match="kind"):
+            encode_jsonl([SilverJsonlEvent(kind, {})])
+
+    @pytest.mark.parametrize("payload", ['{"kind": ""}', '{"kind": 42}'])
+    def test_decoded_event_kind_must_be_a_non_empty_string(self, payload):
+        with pytest.raises(ValueError, match="kind"):
+            decode_jsonl(payload)
+
     def test_encode_jsonl(self):
         events = [
             SilverJsonlEvent(kind="epoch", data={"epoch": 1}),

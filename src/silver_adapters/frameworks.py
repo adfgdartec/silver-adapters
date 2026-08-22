@@ -63,7 +63,7 @@ class TensorFlowBridge:
     @staticmethod
     def to_checkpoint(model: Any, path: str) -> None:
         try:
-            import tensorflow as tf
+            import tensorflow  # noqa: F401
 
             model.save(path)
         except ImportError as error:
